@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="ko" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사이버펑크 2077</title>
+    <link rel="stylesheet" href="html용 파일/1.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        a {
+            color: #76c7c0;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #66023c;
+        }
+
+        #title {
+            text-align: left;
+            padding: 15px 15%;
+            background: linear-gradient(to right, #1e1e1e, #66023c);
+            color: #d6bd68;
+            font-size: 1.8rem;
+            font-weight: 500;
+        }
+
+        #makinggrid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        #leftmenu {
+            flex: 1;
+            min-width: 200px;
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #66023c;
+        }
+
+        .externallinks {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #292929;
+            color: #d6bd68;
+            text-align: center;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .externallinks:hover {
+            color: #66023c;
+            background-color: #3a3a3a;
+        }
+
+        #maintext {
+            flex: 3;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        h2 {
+            color: #d6bd68;
+            margin-top: 20px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #292929;
+        }
+
+        ul {
+            padding-left: 20px;
+            color: #dadada;
+        }
+
+        ul li a {
+            color: #abcdef;
+            transition: color 0.3s;
+        }
+
+        ul li a:hover {
+            color: #66023c;
+        }
+
+        button.copy-button {
+            background-color: #76c7c0;
+            color: #121212;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button.copy-button:hover {
+            background-color: #5ba8a0;
+        }
+
+        details {
+            margin-top: 10px;
+        }
+
+        summary {
+            cursor: pointer;
+            color: #d6bd68;
+            font-weight: bold;
+        }
+
+        summary:hover {
+            color: #66023c;
+        }
+
+        details ul {
+            margin-top: 5px;
+            padding-left: 20px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var copyButtons = document.querySelectorAll('.copy-button');
+            var copyTexts = {
+                "fast-travel-command": "UIS = Game.GetUISystem() UIS:RequestFastTravelMenu()",
+                "waypoint-teleport-command": "function SetupMappinDest() if ObserversSetupDone then return end active = {}; active.map = nil; Observe('MenuScenario_HubMenu', 'GetMenusState', function(self) if self:IsA('MenuScenario_HubMenu') then active.map = self; else active.map = nil; end end) Observe('gameuiWorldMapMenuGameController', 'HasSelectedMappin', function(self) if self.selectedMappin and self.pressedRMB then local mappinVariant = tostring(self.selectedMappin:GetMappinVariant().value); if active.map:IsA('MenuScenario_HubMenu') then CustomMappinDest = self.selectedMappin:GetMappin():GetWorldPosition() end end end) ObserversSetupDone = true; end function TeleportToMappinDest() SetupMappinDest() if not FirstLaunchSetupDone then local body1 = \"FIRST LAUNCH SETUP COMPLETED.\\n( This message will be shown only once during the entire game session )\"; local body2 = \" \\n\\nFrom now on you can select a NEW waypoint in the MAP and re-enter the command every time you select a waypoint.\"; local body3 = \" \\n\\n  1)  EXIT / RE-ENTER the MAP \\n  2)  TRACK A NEW VALID WAYPOINT  ( existent marker or pinned location ) \\n  3)  RE-ENTER THE COMMAND\"; local body4 = \"\\n\\nIf the tracked waypoint is a 'CUSTOM PINNED LOCATION', be sure to click at the EXACT SPOT on the road, otherwise the coordinates will not be acquired.\"; local body = body1..body2..body3..body4; Game.GetUISystem():QueueEvent(NotifyShardRead.new({title = \"TELEPORT TO THE TRACKED WAYPOINT :  INFO\", text = body})) print(\" \\n -  TELEPORT TO WAYPOINT :  \"..body1..\"\\nA TEXT SHARD with the INSTRUCTIONS just opened, go take a read...\\n \") FirstLaunchSetupDone = true; else if CustomMappinDest then Game.GetTeleportationFacility():Teleport(Game.GetPlayer(), Vector4.new(CustomMappinDest.x, CustomMappinDest.y, CustomMappinDest.z, 1), EulerAngles.new(0, 0, 0)) CustomMappinDest = nil; print(\" \\n  -  TELEPORTING . . .    (  If you are stuck at spawn time, you can use the ' TELEPORT FORWARD ' command  ) \\n \") else print(\" \\n  -  TRACK A VALID WAYPOINT ON THE MAP FIRST.   (  If it's a CUSTOM PINNED LOCATION, it must be placed on the exact spot on the road  ) \\n \") end end end TeleportToMappinDest()",
+                "position-command": "Pos = GetPlayer():GetWorldPosition() print(Pos)",
+                "overheat-command": "for i = 1, n do\n    Game.AddToInventory(\"Items.OverheatLvl4Program\", 1)\nend",
+                "memory-wipe-command": "for i = 1, n do\n    Game.AddToInventory(\"Items.MemoryWipeLvl4Program\", 1)\nend",
+                "weapon-glitch-command": "for i = 1, n do\n    Game.AddToInventory(\"Items.WeaponMalfunctionLvl4Program\", 1)\nend",
+                "bait-command": "for i = 1, n do\n    Game.AddToInventory(\"Items.WhistleLvl4Program\", 1)\nend",
+                "cyberware-malfunction-command": "for i = 1, n do\n    Game.AddToInventory(\"Items.DisableCyberwareLvl4Program\", 1)\nend",
+                "sonic-shock-command": "for i = 1, n do\n    Game.AddToInventory(\"Items.CommsNoiseLvl4Program\", 1)\nend",
+                "quickhack-components-command": "Game.AddToInventory(\"Items.QuickHackLegendaryMaterial1\", -n)"
+
+
+            };
+
+            copyButtons.forEach(function (button) {
+                button.addEventListener('click', function (event) {
+                    var commandKey = event.target.getAttribute('data-command-key');
+                    var textToCopy = copyTexts[commandKey];
+                    navigator.clipboard.writeText(textToCopy)
+                        .then(() => alert('커맨드가 클립보드에 복사되었습니다: ' + textToCopy))
+                        .catch(err => console.error('Error:', err));
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <a href="#titleoutline"><img src="html용 파일\0.jpg" width="100%" title="Cyberpunk 2077"></a>
+    <div id="titleoutline">
+        <div id="title">
+            <h1><a href="L_사이버펑크 2077.html">Cyberpunk 2077: Phantom Liberty</a></h1>
+        </div>
+    </div>
+    <div id="makinggrid">
+        <div id="leftmenu">
+            <a href="https://docs.google.com/spreadsheets/d/1yHbti3_73KEvOp6M6TwV44HWDTEhHl_B-Wvbk11ffLg/edit?usp=sharing"
+                target="_blank">
+                <div class="externallinks">Console Command</div>
+            </a>
+            <a href="https://maps.piggyback.com/cyberpunk-2077/maps/night-city"
+                target="_blank">
+                <div class="externallinks">Map  </div>
+            </a>
+            <a href="https://namu.wiki/w/%EC%82%AC%EC%9D%B4%EB%B2%84%ED%8E%91%ED%81%AC%202077/%EC%8A%A4%ED%86%A0%EB%A6%AC"
+                target="_blank">
+                <div class="externallinks">Story</div>
+            </a>
+            <a href="https://namu.wiki/w/%EC%82%AC%EC%9D%B4%EB%B2%84%ED%8E%91%ED%81%AC%202077/%ED%8A%B9%EC%A0%84"
+                target="_blank">
+                <div class="externallinks">Perks</div>
+            </a>
+            <a href="https://namu.wiki/w/%EC%82%AC%EC%9D%B4%EB%B2%84%ED%8E%91%ED%81%AC%202077/%EC%9E%A5%EB%B9%84#toc"
+                target="_blank">
+                <div class="externallinks">Equipments</div>
+            </a>
+            <a href="https://namu.wiki/w/%EC%82%AC%EC%9D%B4%EB%B2%84%EC%9B%A8%EC%96%B4" target="_blank">
+                <div class="externallinks">Cyberware</div>
+            </a>
+            <a href="https://namu.wiki/w/%ED%80%B5%ED%95%B5" target="_blank">
+                <div class="externallinks">Quickhacks</div>
+            </a>
+            <a href="https://namu.wiki/w/%EC%82%AC%EC%9D%B4%EB%B2%84%ED%8E%91%ED%81%AC%202077/%EC%9E%A5%EB%B9%84/%EC%B4%9D%EA%B8%B0"
+                target="_blank">
+                <div class="externallinks">Arms</div>
+            </a>
+            <a href="https://namu.wiki/w/%EC%82%AC%EC%9D%B4%EB%B2%84%ED%8E%91%ED%81%AC%202077/%EC%9D%B4%EB%8F%99%20%EC%88%98%EB%8B%A8"
+                target="_blank">
+                <div class="externallinks">Vehicles</div>
+            </a>
+            <a href="https://namu.wiki/w/%EC%82%AC%EC%9D%B4%EB%B2%84%ED%8E%91%ED%81%AC%202077/%EB%9D%BC%EB%94%94%EC%98%A4#toc"
+                target="_blank">
+                <div class="externallinks">Radio</div>
+            </a>
+            <a href="https://www.google.com/search?q=%EC%82%AC%EC%9D%B4%EB%B2%84%ED%8E%91%ED%81%AC+2077&amp;oq=%EC%82%AC%EC%9D%B4%EB%B2%84%ED%8E%91%ED%81%AC+2077&amp;sourceid=chrome&amp;ie=UTF-8"
+                target="_blank">
+                <div class="externallinks">Google Search</div>
+            </a>
+            <a href="https://cyberpunk2077.wiki.fextralife.com/Cyberpunk+2077+Wiki" target="_blank">
+                <div class="externallinks">Cyberpunk Wiki</div>
+            </a>
+            <a href="https://www.nexusmods.com/cyberpunk2077/users/myaccount?tab=download+history" target="_blank">
+                <div class="externallinks">NEXUS MODS</div>
+            </a>
+        </div>
+        <div id="maintext">
+            <div id="indexbox">
+                <h2>목차</h2>
+                <ol>
+                    <li style="color: #000000; text-shadow: 0px 0px 5px #ffffff; font-size: 1.05em;"><a href="#Basic"
+                            style="color: #000000; text-shadow: 0px 0px 5px #ffffff; font-size: 1.05em;">기본 설정 및 팁</a>
+                    </li>
+                    <li style="color: #000000; text-shadow: 0px 0px 5px #ffffff; font-size: 1.05em;"><a
+                            href="#CopyCommands"
+                            style="color: #000000; text-shadow: 0px 0px 5px #ffffff; font-size: 1.05em;">콘솔 커맨드 복사</a>
+                    </li>
+                    <li style="color: #000000; text-shadow: 0px 0px 5px #ffffff; font-size: 1.05em;"><a href="#Mods"
+                            style="color: #000000; text-shadow: 0px 0px 5px #ffffff; font-size: 1.05em;">모드</a></li>
+                    <li style="color: #000000; text-shadow: 0px 0px 5px #ffffff; font-size: 1.05em;"><a
+                            href="#aboutgame"
+                            style="color: #000000; text-shadow: 0px 0px 5px #ffffff; font-size: 1.05em;">개인적인 생각</a>
+                    </li>
+                    <li style="color: #000000; text-shadow: 0px 0px 5px #ffffff; font-size: 1.05em;"><a href="#etc"
+                            style="color: #000000; text-shadow: 0px 0px 5px #ffffff; font-size: 1.05em;">노트</a></li>
+                </ol>
+            </div>
+            <h2 id="Basic"><a href="#indexbox">기본 설정 및 팁</a></h2>
+            <ul>
+                <li><span class="bionicreading">관리자 권한</span>으로 실행</li>
+                <li><span class="bionicreading">시작 옵션</span></li>
+                <ul>
+                    <li>--launcher-skip -skipStartScreen -modded</li>
+                    <ul>
+                        <li>레드 모드 새로 깔면 런처 한 번 거치기</li>
+                    </ul>
+                </ul>
+                <li><a href="C:\Users\Stark\AppData\Local\CD Projekt Red\Cyberpunk 2077\UserSettings.json"
+                        target="_blank">UserSettings.json</a> 파일 수정</li>
+                <ul>
+                    <li>이전 옵션, 다음 옵션</li>
+                    <ul>
+                        <li>2223, 2229번째 줄: 'IK_Left', 'IK_Right'</li>
+                    </ul>
+                    <li>인벤토리 수량 UI 변경</li>
+                    <ul>
+                        <li>2259, 2265번째 줄: 'IK_A', 'IK_D'</li>
+                    </ul>
+                </ul>
+                <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\r6\config\inputContexts.xml"
+                        target="_blank">inputContexts.xml</a> 파일 수정</li>
+                <ul>
+                    <li>설정 속도 증가</li>
+                    <ul>
+                        <li>timeout 수정</li>
+                        <ul>
+                            <li>1347번째 줄 분해: 0.4 → 0.001</li>
+                            <li>1348번째 줄 제작: 0.8 → 0.14</li>
+                            <ul>
+                                <li>0.14: Instant가 되면 제작 재료를 볼 수 없음</li>
+                            </ul>
+                        </ul>
+                    </ul>
+                    <li>회피 더블 탭 간격 축소</li>
+                    <ul>
+                        <li>1401번째 줄: uptime, downtime 0.127로 수정</li>
+                    </ul>
+                </ul>
+                <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\r6\config\inputUserMappings.xml"
+                        target="_blank">inputUserMappings.xml</a> 파일 수정</li>
+                <ul>
+                    <li>월드 맵 웨이포인트 키 변경</li>
+                    <ul>
+                        <li>1686번째 줄: "IK_RightMouse" → "IK_V"</li>
+                    </ul>
+                    <li>월드 맵 필터 선택 키 삭제 </li>
+                    <ul>
+                        <del>
+                            <li>1782번째 줄 주석 처리</li>
+                        </del>
+                    </ul>
+                    <li>신체 던지기 키 변경</li>
+                    <ul>
+                        <li>505번째 줄: "IK_MiddleMouse" overridableUI="combatGadget" → "Mouse5"</li>
+                    </ul>
+                    <li>퀘스트 항목 변경</li>
+                    <ul>
+                        <li>675번째 줄: "IK_T" → "IK_B"</li>
+                    </ul>
+                    <li>무장 차량 무기 변경</li>
+                    <ul>
+                        <li>990번째 줄: "IK_MouseWheelUp" → "IK_Minus"</li>
+                        <li>994번째 줄: "IK_MouseWheelDown" → "IK_0"</li>
+                    </ul>
+                </ul>
+                <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\r6\config\settings\options.json"
+                        target="_blank">options.json</a> 파일 수정</li>
+                <ul>
+                    <li>카메라 자동 초기화 시간 변경</li>
+                    <ul>
+                        <li>434번째 줄: "max_value": 10.0 → 65535.0</li>
+                    </ul>
+                </ul>
+                <li><span class="bionicreading">세이브 파일 손상</span>이 문제일 수도 있다</li>
+                <li>모드 수치 변경할 땐 가능하면 <span class="bionicreading">주석</span> 사용</li>
+                <li><span class="bionicreading">이머시브</span>한 플레이</li>
+                <ul>
+                    <li class="bionicreading">암살단</li>
+                    <ul>
+                        <li>진실은 없다, 모든 것이 허용된다.</li>
+                        <li>우리는 어둠 속에서 움직이며 빛을 섬긴다. 우리는 암살단이다.</li>
+                        <ul>
+                            <li>독수리: 정보를 먼저 얻고 빠르게 적을 낚아채라.</li>
+                        </ul>
+                        <li>무고한 자에게 칼을 들이대지 말라. 잘 보이는 곳에 숨어라. 형제단의 믿음을 저버리지 말라.</li>
+                        <ul>
+                            <li>늑대: 개처럼 가까이 있다가 맹수처럼 사냥하라.</li>
+                        </ul>
+                    </ul>
+                    <li class="bionicreading">블레이드 러너 2049</li>
+                    <ul>
+                        <li>인간성에 대한 고민</li>
+                        <li>AI로서 가지는 우월성</li>
+                        <li>하차 시에 체력 아이템 두 번 써서 아드레날린 채우기</li>
+                    </ul>
+                    <li class="bionicreading">사이버펑크: 엣지러너</li>
+                    <ul>
+                        <li>안전 운전: 운전 사고로 죽는 NPC는 무고하잖아
+                        </li>
+                        <li>지하철 활용</li>
+                    </ul>
+                    <li><span class="bionicreading">외형</span>에 맞는 플레이</li>
+                    <ul>
+                        <li>존 윅 택티컬 수트</li>
+                        <li>맥스택</li>
+                        <li></li>
+                        <li>블레이드 러너</li>
+                        <li></li>
+                        <li>조니 실버핸드</li>
+                    </ul>
+                    <li>헤이우드 글렌 서쪽 빌의 핫돠그 가게</li>
+                </ul>
+                <li>샤드는 제목을 먼저 확인</li>
+                <li>산데비스탄으로 원하는 위치 → 미끼 사용 후 표적이 움직이기 전까지 위치 유지 → 표적이 움직이면 다시 산데비스탄으로 숨을 곳에 가기</li>
+                <ul>
+                    <li>나노드론 사용</li>
+                </ul>
+                <li>암살검에 팍스 붙인 후 원 샷에 죽이면 불이 붙지 않는다</li>
+                <ul>
+                    <li>확인사살로는 붙음</li>
+                </ul>
+                <li>시간 조절은 AMM 말고 심플 메뉴의 Misc에서</li>
+                <li>펜트하우스와 메가빌딩 아파트는 FreeFly: 스파이더맨처럼</li>
+                <li>전설 부품은 셰프스 나이프: 퀵핵 응용 공학뿐 아니라 정밀 공업 능력을 갖춘 기업 컨셉</li>
+                <li>모노 와이어는 퀵핵 업로드 외에도 신화 퀵핵 분해 및 대량 판매에 필요하다</li>
+                <li>양자 튜너는 모드 호환에 문제가 있으니 사용 금지</li>
+                <li>RepairYourCar 바인딩은 휠 다운</li>
+            </ul>
+            <h2 id="CopyCommands"><a href="#indexbox">콘솔 커맨드 복사</a></h2>
+            <ul>
+                <li>
+                    <details>
+                        <summary style="color: #abcdef;">빠른 이동 실행</summary>
+                        <button class="copy-button" data-command-key="fast-travel">코드 복사</button>
+                        <ul>
+                            <li>UIS = Game.GetUISystem() UIS:RequestFastTravelMenu()</li>
+                        </ul>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary style="color: #abcdef;">웨이포인트 텔레포트</summary>
+                        <button class="copy-button" data-command-key="waypoint-teleport-command">코드 복사</button>
+                        <ul>
+                            <li>function SetupMappinDest() if ObserversSetupDone then return end active = {}; active.map
+                                = nil; Observe('MenuScenario_HubMenu', 'GetMenusState', function(self) if
+                                self:IsA('MenuScenario_HubMenu') then active.map = self; else active.map = nil; end end)
+                                Observe('gameuiWorldMapMenuGameController', 'HasSelectedMappin', function(self) if
+                                self.selectedMappin and self.pressedRMB then local mappinVariant =
+                                tostring(self.selectedMappin:GetMappinVariant().value); if
+                                active.map:IsA('MenuScenario_HubMenu') then CustomMappinDest =
+                                self.selectedMappin:GetMappin():GetWorldPosition() end end end) ObserversSetupDone =
+                                true; end function TeleportToMappinDest() SetupMappinDest() if not FirstLaunchSetupDone
+                                then local body1 = "FIRST LAUNCH SETUP COMPLETED.\n( This message will be shown only
+                                once during the entire game session )"; local body2 = " \n\nFrom now on you can select a
+                                NEW waypoint in the MAP and re-enter the command every time you select a waypoint.";
+                                local body3 = " \n\n 1) EXIT / RE-ENTER the MAP \n 2) TRACK A NEW VALID WAYPOINT (
+                                existent marker or pinned location ) \n 3) RE-ENTER THE COMMAND"; local body4 = "\n\nIf
+                                the tracked waypoint is a 'CUSTOM PINNED LOCATION', be sure to click at the EXACT SPOT
+                                on the road, otherwise the coordinates will not be acquired."; local body =
+                                body1..body2..body3..body4; Game.GetUISystem():QueueEvent(NotifyShardRead.new({title =
+                                "TELEPORT TO THE TRACKED WAYPOINT : INFO", text = body})) print(" \n - TELEPORT TO
+                                WAYPOINT : "..body1.."\nA TEXT SHARD with the INSTRUCTIONS just opened, go take a
+                                read...\n ") FirstLaunchSetupDone = true; else if CustomMappinDest then
+                                Game.GetTeleportationFacility():Teleport(Game.GetPlayer(),
+                                Vector4.new(CustomMappinDest.x, CustomMappinDest.y, CustomMappinDest.z, 1),
+                                EulerAngles.new(0, 0, 0)) CustomMappinDest = nil; print(" \n - TELEPORTING . . . ( If
+                                you are stuck at spawn time, you can use the ' TELEPORT FORWARD ' command ) \n ") else
+                                print(" \n - TRACK A VALID WAYPOINT ON THE MAP FIRST. ( If it's a CUSTOM PINNED
+                                LOCATION, it must be placed on the exact spot on the road ) \n ") end end end
+                                TeleportToMappinDest()</li>
+                        </ul>
+                    </details>
+                </li>
+            </ul>
+            <h2 id="Mods"><a href="#indexbox">모드</a></h2>
+            <ul>
+                <li>원하는 모드</li>
+                <ul>
+                    <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/1902" target="_blank">Advanced Control</a>
+                    </li>
+                    <ul>
+                        <li>Scroll Walk 업데이트</li>
+                    </ul>
+                </ul>
+                <li>
+                    <a style="font-weight: bolder; font-size: 25px;"
+                        href="https://www.nexusmods.com/cyberpunk2077/mods/818" target="_blank">Simple Menu - An In-Game
+                        UI including Hotkeys</a> 모드 적극 활용
+                </li>
+                <ul>
+                    <li>에디 감소 가능</li>
+                    <li>무기 퀄러티 변경 가능</li>
+                    <li>반동 및 탄 퍼짐 제거</li>
+                    <li>사거리 증가</li>
+                    <li>경찰 수배 레벨 변경: 행동 각인 동기화 안면 사용한다는 설정</li>
+                    <ul>
+                        <li>행동 각인 동기화 안면 습득 이후론 실제 임플란트 사용</li>
+                        <ul>
+                            <li>행동 각인 동기화 안면 쿨타임 0</li>
+                        </ul>
+                    </ul>
+                    <li>무한 스태미나 및 산소</li>
+                    <li>램 회복 속도</li>
+                    <li>슈퍼 줌 토클: DMR</li>
+                    <li>텔레포트 및 위치 저장</li>
+                    <li>무한 더블 점프 및 공중 대시</li>
+                    <li>차량 미션 타이머 비활성화</li>
+                </ul>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/780" target="_blank">FreeFly</a></li>
+                <ul>
+                    <li>ToggleSprint → Sprint</li>
+                    <li>NextWeapon, PreviousWeapon → ChoiceScrollUp, ChoiceScrollDown</li>
+                </ul>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/4591" target="_blank">RadioExt</a></li>
+                <ul>
+                    <li>끊임없는 라디오 업데이트</li>
+                </ul>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/9370" target="_blank">Max Ammo Count</a>:
+                    5800X3D 샀으니 +5830</li>
+                <ul>
+                    <li><del><a href="https://www.nexusmods.com/cyberpunk2077/mods/5040" target="_blank">Expanded Ammo
+                                Counts</a></del> 모드 대체</li>
+                </ul>
+
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/5917" target="_blank">Chop Shops</a> 수정
+                </li>
+                <ul>
+                    <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\bin\x64\plugins\cyber_engine_tweaks\mods\ChopShops\init.lua"
+                            target="_blank">init.lua</a></li>
+                    <ul>
+                        <li>판매 후 디스폰 45초 → 600초</li>
+                        <li>아이콘 변경: 테키 → 수상한 밀수 활동(SmugglersDenVariant)</li>
+                        <ul>
+                            <li><a href="https://nativedb.red4ext.com/gamedataMappinVariant"
+                                    target="_blank">gamedataMappinVariant</a></li>
+                        </ul>
+                        <li>
+                            <details>
+                                <summary style="color: #abcdef;">위치 조정 및 추가: Pos = GetPlayer():GetWorldPosition()
+                                    print(Pos)</summary>
+                                <button class="copy-button" data-command-key="position-command">코드 복사</button>
+                                <ul>
+                                    <li>Pos = GetPlayer():GetWorldPosition() print(Pos)</li>
+                                </ul>
+                            </details>
+                        </li>
+                        <ul>
+                            <li>헤이우드 글렌 Wicked Tires Autoshop: 식스 스트리트와 전투가 벌어져서 옆으로 조정</li>
+                            <li><del>도심 다운타운 서쪽 대교 입구</del>: 밀수라는 설정에 어울림</li>
+                            <ul>
+                                <li>나이트 시티 인터내셔널 앤 트랜스루나로 변경</li>
+                            </ul>
+                            <li>왓슨 노스사이드 북서쪽 배드랜드로 뻗는 길의 빠른 이동 지점 101 북부 근처: 밀수라는 설정에 어울림</li>
+                            <li>산토 도밍고 란초 코로나도 동쪽 배드랜드: 덱스터 드숀 시체 위</li>
+                            <li>산토 도밍고 란초 코로나도 북서쪽 차고: 제이크 에스테베즈한테 차를 받은 위치</li>
+                            <li>퍼시피카 남서쪽 배드랜드 구석 차고: 밀수라는 설정에 어울림</li>
+                            <li>노스사이드 V 아파트 주차장: 가장 싼 집에 어울리는 설정</li>
+                            <ul>
+                                <li>웨이포인트는 아파트로</li>
+                            </ul>
+                            <li>메가빌딩 H10 주차장: 적당한 위치</li>
+                            <li></li>
+                        </ul>
+                    </ul>
+
+                </ul>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/4034" target="_blank">Car Modification
+                        Shop</a> 수정</li>
+                <ul>
+                    <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\bin\x64\plugins\cyber_engine_tweaks\mods\Car Mod Shop\parts"
+                            target="_blank">파트</a></li>
+                    <ul>
+                        <li>차량의 특성에 맞게 적당히 수정</li>
+                    </ul>
+                </ul>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/8326" target="_blank">Kiroshi Optics Night
+                        Vision Mod</a></li>
+                <ul>
+                    <li><del><a href="https://www.nexusmods.com/cyberpunk2077/mods/2913" target="_blank">Simple
+                                Flashlight</a></del> 모드 대체</li>
+                </ul>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/9692" target="_blank">Preem Weaponsmith
+                        2.0</a> 수정</li>
+                <ul>
+                    <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\r6\scripts\PreemWeaponsmith\Tweaking\PreemModCreation.reds"
+                            target="_blank">PreemModCreation.reds</a></li>
+                    <ul>
+                        <li>Omega Charge: 충전 시간 +100% → +0%</li>
+                        <li>Extended Mag: 탄창 +50% → +150%</li>
+                        <li>Velocity Booster: 헤드샷 피해량 배수 +25% → 헤드샷 피해량 배수 +375%</li>
+                        <li>Shock Rounds: 감전 확률 +15% → +100%</li>
+                        <li>Thermal Rounds: 화상 확률 +15% → +100%</li>
+                        <li>Shredder Rounds: 출혈 확률 +15% → 100%</li>
+                        <li>Chemical Rounds: 중독 확률 +15% → 100%</li>
+                        <li>Carbon-Fiber Blade: 치명타 확률 +25% → +100%</li>
+                        <li>Sharp Blade: 출혈 확률 +20% → 100%</li>
+                        <li>Thermal Blade: 화상 확률 +20% → 100%</li>
+                        <li>Quick Mag: 재장전 속도 +30% → +50% </li>
+                    </ul>
+                </ul>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/10169" target="_blank">Quickhacks Boost</a>
+                    수정</li>
+                <ul>
+                    <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\bin\x64\plugins\cyber_engine_tweaks\mods\Quickhacks Boost\config.json"
+                            target="_blank">config.json</a></li>
+                    <ul>
+                        <li>업로드 속도</li>
+                        <ul>
+                            <li>블랙월 퀵핵은 0.142, 나머지는 0.001</li>
+                            <ul>
+                                <li>핑<del>과 음파 충격</del>은 0: 핑은 쓰자마자 다른 퀵핵을 써야 <del>하고 음파 충격은 메모리 소거처럼 뒤에 쓰는 퀵핵이 추적 불가능이
+                                        돼야 해서 바로 업로드가 돼야</del>
+                                    함</li>
+                                <ul>
+                                    <li>음파 충격 너프로 뒤에 쓰는 퀵핵이 추적됨</li>
+                                </ul>
+                            </ul>
+                            <li>메모리 소거는 -8.499: 기본이 8.5라서 0.001s로 맞추기 위함</li>
+                            <li>미끼와 지원 요청 지속 시간은 최대로</li>
+                        </ul>
+                        <li>램 사용량</li>
+                        <ul>
+                            <li>블랙월 퀵핵 전부 42: 한 명한테만 걸 수 있게</li>
+                        </ul>
+                        <li>램 용량</li>
+                        <li>지속 시간</li>
+                        <ul>
+                            <li>메모리 소거: 600</li>
+                        </ul>
+                    </ul>
+                </ul>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/9396" target="_blank">Craft Hardware Store</a>
+                    파일 수정</li>
+                <ul>
+                    <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\r6\scripts\CRAFTHARDWARESTORE-atelier-store.reds"
+                            target="_blank">CRAFTHARDWARESTORE-atelier-store.reds</a></li>
+                    <ul>
+                        <li>티어 5 퀵핵 부품만 남기기</li>
+                        <ul>
+                            <li>퀵핵 응용 공학 기업 컨셉</li>
+                            <ul>
+                                <details>
+                                    <summary style="color: #abcdef;">과열</summary>
+                                    <button class="copy-button" data-command-key="overheat-command">코드 복사</button>
+                                    <ul>
+                                        <li>for i = 1, n do
+                                            Game.AddToInventory("Items.OverheatLvl4Program", 1)
+                                            end</li>
+                                    </ul>
+                                </details>
+                                <details>
+                                    <summary style="color: #abcdef;">메모리 소거</summary>
+                                    <button class="copy-button" data-command-key="memory-wipe-command">코드 복사</button>
+                                    <ul>
+                                        <li>for i = 1, n do
+                                            Game.AddToInventory("Items.MemoryWipeLvl4Program", 1)
+                                            end</li>
+                                    </ul>
+                                </details>
+                                <details>
+                                    <summary style="color: #abcdef;">무기 오류</summary>
+                                    <button class="copy-button" data-command-key="weapon-glitch-command">코드
+                                        복사</button>
+                                    <ul>
+                                        <li>for i = 1, n do
+                                            Game.AddToInventory("Items.WeaponMalfunctionLvl4Program", 1)
+                                            end</li>
+                                    </ul>
+                                </details>
+                                <details>
+                                    <summary style="color: #abcdef;">미끼</summary>
+                                    <button class="copy-button" data-command-key="bait-command">코드 복사</button>
+                                    <ul>
+                                        <li>for i = 1, n do
+                                            Game.AddToInventory("Items.WhistleLvl4Program", 1)
+                                            end</li>
+                                    </ul>
+                                </details>
+                                <details>
+                                    <summary style="color: #abcdef;">사이버웨어 오작동</summary>
+                                    <button class="copy-button" data-command-key="cyberware-malfunction-command">코드
+                                        복사</button>
+                                    <ul>
+                                        <li>for i = 1, n do
+                                            Game.AddToInventory("Items.DisableCyberwareLvl4Program", 1)
+                                            end</li>
+                                    </ul>
+                                </details>
+                                <details>
+                                    <summary style="color: #abcdef;">음파 충격</summary>
+                                    <button class="copy-button" data-command-key="sonic-shock-command">코드 복사</button>
+                                    <ul>
+                                        <li>for i = 1, n do
+                                            Game.AddToInventory("Items.CommsNoiseLvl4Program", 1)
+                                            end</li>
+                                    </ul>
+                                </details>
+                                <details>
+                                    <summary style="color: #abcdef;">퀵핵 부품 사용</summary>
+                                    <button class="copy-button" data-command-key="quickhack-components-command">코드
+                                        복사</button>
+                                    <ul>
+                                        <li>Game.AddToInventory("Items.QuickHackLegendaryMaterial1", -n)
+                                        </li>
+                                    </ul>
+                                </details>
+                            </ul>
+                        </ul>
+                        <ul>
+                            <li>판매는 빅터 및 신뢰할 수 있는 사람</li>
+                        </ul>
+                    </ul>
+                </ul>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/9939" target="_blank">Stealth Remote Control
+                        Cars and Turrets</a> 수정</li>
+                <ul>
+                    <li><a
+                            href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\r6\scripts\StealthRC.reds">StealthRC.reds</a>
+                    </li>
+                    <ul>
+                        <li>피격 횟수 당 0.001%</li>
+                        <ul>
+                            <li>16, 22번째 줄 traceCost: 1.5, 6.0 → 0.001 </li>
+                        </ul>
+                    </ul>
+                </ul>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/3819" target="_blank">Custom Map Markers</a>
+                    모드 적극 활용</li>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/3419" target="_blank">Nano Drone</a> 수정
+                </li>
+                <ul>
+                    <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\bin\x64\plugins\cyber_engine_tweaks\mods\nanoDrone\modules\data.lua"
+                            target="_blank">data.lua</a></li>
+                    <ul>
+                        <li>범위: 100 → 1000</li>
+                        <li>퀵핵 소모 배터리: 0.7 → 0.000001</li>
+                        <li>속도: 0.22 → 0.68</li>
+                        <li>가속도: 0.26 → 0.42</li>
+                        <li>배터리 용량: 1.2 → 1000</li>
+                        <li>배터리 충전 속도 (소요 시간): 0.8 → 0.000001</li>
+                    </ul>
+                    <li>단축키 변경: 내려가기 'IK_V', 올라가기 'IK_T'</li>
+                    <ul>
+                        <ul>
+                            <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\r6\input\NanoDrone.xml"
+                                    target="_blank">NanoDrone.xml</a>
+                                <ul>
+                                    <li>&ltaction name="CallVehicle_Button" map="CallVehicle_Button" /&gt</li>
+                                    <li>&ltaction name="HolsterWeapon_Button" map="HolsterWeapon_Button"/&gt</li>
+                                </ul>
+                            <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\bin\x64\plugins\cyber_engine_tweaks\mods\nanoDrone\modules\input.lua"
+                                    target="_blank">input.lua</a>
+                                <ul>
+                                    <li>123번째 줄: elseif actionName == 'CallVehicle_Button' then</li>
+                                    <li>132번째 줄: elseif actionName == 'HolsterWeapon_Button' then</li>
+                                </ul>
+                        </ul>
+                    </ul>
+                    <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\bin\x64\plugins\cyber_engine_tweaks\mods\nanoDrone\modules\drone.lua"
+                            target="_blank">drone.lua</a></li>
+                    <ul>
+                        <li>아이콘 변경</li>
+                        <ul>
+                            <li>70번째 줄: 아파트 → 와이파이 모양(Zzz10_RemoteControlDrivingVariant)</li>
+                            <li><a href="https://nativedb.red4ext.com/gamedataMappinVariant"
+                                    target="_blank">gamedataMappinVariant</a></li>
+                        </ul>
+
+                    </ul>
+                </ul>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/9268" target="_blank">No Fall Damage</a></li>
+                <ul>
+                    <li>퀘이크 + 애니메이션</li>
+                </ul>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/4159">Better Optical Camo</a></li>
+                <ul>
+                    <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\bin\x64\plugins\cyber_engine_tweaks\mods\BetterOpticalCamo\core\OpticalCamoManager.lua"
+                            target="_blank">OpticalCamoManager.lua</a></li>
+                    <ul>
+                        <li>모든 -1 값을 65535로 변환</li>
+                        <ul>
+                            <li>옵티컬 카모 실행 직후 꺼지는 현상 수정</li>
+                        </ul>
+                        <li>행동 각인 동기화 안면과 함께 사용하기 위해선 <a href="https://www.nexusmods.com/cyberpunk2077/mods/13392"
+                                target="_blank">Extra gadget quickslots </a>모드 필요</li>
+                        <ul>
+                            <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\r6\scripts\extra_gadget_quickslots\extra_gadget_quickslots.reds"
+                                    target="_blank">extra_gadget_quickslots.reds </a>파일 수정</li>
+                            <ul>
+                                <li>3번째 줄: ToggleSprint → Sprint</li>
+                                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/9429?tab=files&file_id=76098"
+                                        target="_blank">Cyberware-EX의 HUD 사이즈 픽스</a></li>
+                            </ul>
+                            <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/3096" target="_blank">Custom
+                                    Quickslots </a>모드는 버그가 많음</li>
+                        </ul>
+                    </ul>
+                </ul>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/2987" target="_blank">Virtual Atelier</a> 기반의
+                    모드 아이템들은, 구매 페이지에서 F를 길게 누르면 수량 변경이 가능하다</li>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/13842" target="_blank">Drive an Aerial Vehicle
+                        - Flight Mod Using AV and Helicopter</a> 모드는 제타테크 아틀러스로</li>
+                <ul>
+                    <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\bin\x64\plugins\cyber_engine_tweaks\mods\DriveAerialVehicle\Data\default_model.json"
+                            target="_blank">default_model.json </a>파일 수정: stealth 계열만 사용</li>
+                    <ul>
+                        <li>json 파일은 주석 처리가 안 되므로 안 쓰는 건 지우기</li>
+                    </ul>
+                    <li>이동 수단 불러오기 안 되는 곳은 메뉴 키</li>
+                    <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\bin\x64\plugins\cyber_engine_tweaks\mods\DriveAerialVehicle\Data\user_setting.json"
+                            target="_blank">user_setting.json </a>파일 수정: G키와 T키 맞바꿈</li>
+                    <ul>
+                        <li>Nano Drone 모드와 비슷하게</li>
+                    </ul>
+                </ul>
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/9547" target="_blank">Sandevistan Customization - Time Dilation</a> 모드 수정</li>
+                <ul>
+                    <li><a href="C:\Program Files (x86)\GOG Galaxy\Games\Cyberpunk 2077\bin\x64\plugins\cyber_engine_tweaks\mods\ApogeePLUSPLUS\config.json" target="_blank"> config.json 파일</a></li>
+                    <ul>
+                        <li>"timedilationSpeed": 0.14</li>
+                    </ul>
+                </ul>
+                <li></li>
+            </ul>
+            <h2 id="aboutgame"><a href="#indexbox">개인적인 생각</a></h2>
+            <ul>
+                <li>주디는 여성적이고 팬앰은 남성적인데 오히려 연애 성향이 다름</li>
+                <li>사망자 로또 번호... 이런 게 정규 방송에 나오는 게 사이버펑크...</li>
+                <li>내가 무고한 이들을 죽인 거라면...?</li>
+                <ul>
+                    <li>아라사카나 밀리테크가 행하는 준(準)공적 임무와 같이 생각해보면 참 묘함</li>
+                </ul>
+                <li>피를 씻어내는 데는 물이랑 식초를 1:1로 섞은 게 최고다... 이게 사이버펑크의 꿀팁???</li>
+                <li>내가 박살 낸 델라메인은 내가 그 자체를 없애버릴 가능성이 있어도 최선의 선택지를 내게 남겼다</li>
+                <ul>
+                    <li>이게 진정한 '인간을 위한 AI'에 가깝긴 하지만 이러한 '인공지능'이 완벽한가. 결국 AI의 결론이 인간만을 향하는 거라면 이것이 진짜 지능을 가진 독립
+                        구성체인가
+                    </li>
+                    <ul>
+                        <li>노예가 인간인가. 그렇지 않았다면 AI의 지능은 어떻게 봐야 하는가</li>
+                    </ul>
+                </ul>
+                <li>법의 의미와 의식</li>
+                <li>밀리테크 지시에 나오는 '영구 제압'... 사설 치안 유지 체제가 절대로 있어서는 안 되는 이유</li>
+                <ul>
+                    <li>NCPD는 팔다리를 향한 경고사격을 허용... 결국 부패하면 뭐든지 망하는 법</li>
+                    <ul>
+                        <li>공식적인 절차 없이 최대 1년 구속 가능</li>
+                    </ul>
+                </ul>
+                <li>리버의 말: 두통이 있는 사람이 뜬금없이 찻길에 뛰어들었어. 근데 옆집 사람이 며칠 전에 누가 그 사람의 에어컨을 건드린 걸 기억했어. 사고일까, 우연일까? 아니면
+                    암살일까?
+                </li>
+                <li>만약 무고한 누군가를 희생해서 조니와 V를 살릴 수 있다면? 그런 상황에서의 무고한 누군가와 쉽게 죽임을 당하는 수많은 NPC의 가치는 다른가?</li>
+                <li>별 엔딩... 새가 살아있어...</li>
+                <ul>
+                    <li>마마 웰즈... 내 새끼 장례 또 치르긴 싫으니까...</li>    
+                </ul>
+                <li>태양 에너지 발전 중단</li>
+                <li>중국은 모든 자동차를 자율주행으로 바꿨으며 자전거에 대한 GPS 착용을 의무화</li>
+                <li>루시 새커리: 난 의사야. 판사가 아니라고</li>
+                <li>미국인의 평균 기대 수명은 58세...?</li>
+                <li>조니의 올드 팬</li>
+                <ul>
+                    <li>조니: 팬이 예전에 갇혀 있는 것도 아라사카 타워 폭파 이후에 여전히 똑같은 기업이랑 다를 거 없어. 자신과 세상을 위해 변화해야지.</li>
+                    <li>V: 변화? 폭파 따위로 세상을 변화시킬 순 없어.</li>
+                    <li>조니: 그럼 음악은 그 답이야? 가사나 외우며 그 의미는 알지도 못하는데.</li>
+                    <li>V: 그럼 너처럼 학살이라도 해? 변화를 원하지 않는 것도 선택이야.</li>
+                    <li>조니: 그런 선택은 쓰레기야.</li>
+                </ul>
+                <li>퀘스트의 시점 설정이 문제</li>
+                <ul>
+                    <li>왜 지금 당장?</li>
+                    <li></li>
+                </ul>
+                <li>디테일 부족: 왜 늘 유니티?</li>
+                <li>델라메인: "진실과 선은 분열을 낳는 가치죠. 반면에 아름다움은 보편적입니다."</li>
+                <li>장애인에 대한 차별은 단순히 적극적 차별을 넘어서 소극적 차별도 있다.</li>
+                <li>알렉스: "운명은 함수 같은 거야."</li>
+                <li></li>
+            </ul>
+            <h2 id="etc"><a href="#indexbox">노트</a></h2>
+            <ul style="margin-bottom:25%">
+                <li><a href="https://www.nexusmods.com/cyberpunk2077/mods/5058" target="_blank">Missing Persons -
+                        Fixer's Hidden Gems</a></li>
+                <ul>
+                    <li>왓슨 리틀 차이나 북부</li>
+                </ul>
+                <li>음식은 배달 컨셉</li>
+                <li>빚: 4,000,000€$</li>
+                <ul>
+                    <li>엣지러너 펜트하우스 & AV</li>
+                </ul>
+                <li>브렌든</li>
+                <ul>
+                    <li>테오 프라이스의 남친인 도널드 런디?</li>
+                    <li>사?람</li>
+                </ul>
+                <li>롤러코스터</li>
+                <li>기본은 잠입이다</li>
+                <ul>
+                    <li>원거리 저격을 우선으로</li>
+                    <li>미니맵을 통한 적 확인</li>
+                    <li>에이전트 and 오퍼레이터</li>
+                </ul>
+                <li>무자막 영음 영어 공부?</li>
+                <ul>
+                    <li>저장 파일 관리</li>
+                </ul>
+                <li>메가빌딩 1층</li>
+                <li>에어론다이트 중량</li>
+                <li>1</li>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
